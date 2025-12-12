@@ -2,14 +2,24 @@ import React, { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { assets } from '../assets/assets'
 import { useAppContext } from '../Content/AppContext'
+import { toast } from 'react-hot-toast';
 const Navbar = () => {
     const [open, setOpen] = useState(false)
-    const { user, setUser, setShowUserLogin, navigate, setSearchQuery, searchQuery, getCartCount, getCartAmount } = useAppContext();
+    const { user, setUser, setShowUserLogin, navigate, setSearchQuery, searchQuery, getCartCount, getCartAmount , axios} = useAppContext();
     const logout = async () => {
-        setUser(false)
-        setOpen(false);
-        navigate("/");
-
+      try {
+        const  {data} = await axios.get('api/user/logout')
+        if(data.success){
+            toast.success(data.message);
+            setUser(null);
+            navigate('/');
+        }else{
+            toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
+        
+      }
     }
     useEffect(() => {
         if (searchQuery.length > 0) {
@@ -27,9 +37,12 @@ const Navbar = () => {
 
             {/* Desktop Menu */}
             <div className="hidden sm:flex items-center gap-8">
+                 <NavLink to={"/seller"}
+                 className="border border-gray-400 px-3 py-1 rounded hover:bg-gray-100"
+                >Seller Dashboard</NavLink>
                 <NavLink to={"/"}>Home</NavLink>
                 <NavLink to={"/products"}>All Products</NavLink>
-                <NavLink to={"/contact"}>Contact</NavLink>
+               
 
                 <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
                     <input onChange={(e) => setSearchQuery(e.target.value)} className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500" type="text" placeholder="Search products" />
@@ -74,7 +87,7 @@ const Navbar = () => {
                 <NavLink to={"/"} className="block" onClick={() => setOpen(false)}>Home</NavLink>
                 <NavLink to={"/products"} className="block" onClick={() => setOpen(false)}>Products</NavLink>
                 {user && <NavLink to={"/order"} className="block" onClick={() => setOpen(false)}>My Orders</NavLink>}
-                <NavLink to={"/contact"} className="block" >Contact</NavLink>
+                <NavLink to={"/seller"} className="block" >Seller Dashboard</NavLink>
                 {!user ? (<button className="cursor-pointer px-6 py-2 mt-2 bg-primary hover:bg-primary-dull transition text-white rounded-full text-sm" onClick={() => {
                     setOpen(false);
                     setShowUsetLogin(true)

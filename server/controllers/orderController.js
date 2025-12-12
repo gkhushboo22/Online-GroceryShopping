@@ -5,17 +5,17 @@ export const placeOrderCOD = async(req, res) => {
     try {
         const {userId,items,address} = req.body
         if(!address || items.length === 0){
-            return res.json({success:false, message:"Address and items are required to place order"})
+            return res.json({success:false, message:"Invalid data"})
 
         }
         // calculate Amount Using Items
-        let amont = await items.reduce(async(acc, item)=>{
+        let amount = await items.reduce(async(acc, item)=>{
             const product = await Product.findById(item.product);
-            return (await acc) + product.offeredPrice * item.quantity;
+            return (await acc) + product.offerPrice * item.quantity;
 
         },0)
         // Add Tax Charges(2%)
-        amount += Math.round(amount * 0.02);
+        amount += Math.floor(amount * 0.02);
         await Order.create({
             userId,
             items,
@@ -37,7 +37,7 @@ export const getOrders = async(req, res) => {
         const {userId} = req.body
         const orders = await Order.find({
             userId,
-            $or : [{paymentType : "COD"}, {ispaid : true}]
+            $or : [{paymentType : "COD"}, {isPaid : true}]
 
         }).populate("items.product address").sort({createdAt : -1})
         res.json({success:true, orders})
@@ -52,7 +52,6 @@ export const getOrders = async(req, res) => {
 
 export const getAllOrders = async(req, res) => {
     try {
-        const {userId} = req.body
         const orders = await Order.find({
 
             $or : [{paymentType : "COD"}, {ispaid : true}]

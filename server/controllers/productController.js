@@ -20,7 +20,7 @@ export const addProduct = async(req, res) => {
       res.json({success: true,message:"Product added successfully"})
     } catch (error) {
              console.error(error.message);
-        res.json({success: false , message: error.message})
+        return res.json({success: false , message: error.message})
     }
 
 }
@@ -51,10 +51,10 @@ export const changeStock = async(req, res) => {
     try {
         const {id,inStock} = req.body;
         await Product.findByIdAndUpdate(id,{inStock})
-        res.json({success:true, message:"Product stock updated successfully"})
+      return  res.json({success:true, message:"Product stock updated successfully"})
     } catch (error) {
            console.log(error.message)
-        res.json({success: false , message: error.message})
+        return  res.json({success: false , message: error.message})
     }
     
 }

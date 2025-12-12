@@ -9,7 +9,7 @@ const Addproducts = () => {
     const [category, setCategory] = useState('');
     const [price, setPrice] = useState('');
     const [offerPrice, setOfferPrice] = useState('');
-    const { axios } = useAppContext();
+    const {axios} = useAppContext();
     const onSubmitHandler = async (eve) => {
         try {
             eve.preventDefault();
@@ -26,7 +26,7 @@ const Addproducts = () => {
             for (let i = 0; i < files.length; i++) {
                 formData.append("images", files[i]);
             }
-            const { data } = await axios.post('/api/product/add', formData )
+            const {data} = await axios.post('/api/product/add', formData )
            
             if (data.success) {
                 toast.success(data.message);
